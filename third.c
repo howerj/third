@@ -5,12 +5,12 @@
 /*Current dictionary pointer is at m[0].*/
 #define c m[m[0]++]
 
-char s[5000];
-int m[20000] = { 32 }, L = 1, I, T[500], *S = T, t = 64, w, f;
+char s[2500];
+int m[2500] = { 32 }, L = 1, I, T[500], *S = T, t = 64, w, f;
 
 enum primitives{
   PUSH,COMPILE,RUN,DEFINE,IMMEDIATE,READ,LOAD,STORE,SUBTRACT,
-  MULTIPLY,DIVIDE,LESSZ,EXIT,ECHO,KEY,PICK,LAST_ENUM
+  MULTIPLY,DIVIDE,LESSZ,EXIT,ECHO,KEY,PICK,FROMR,TOR,BRANCH,NBRANCH,LAST_ENUM
 };
 
 void compile_word(int x)
@@ -26,6 +26,7 @@ void compile_word(int x)
 
 void run(int x)
 {
+INNER:
         switch (m[x++]) {
         case PUSH:
                 *++S = f;
@@ -48,7 +49,12 @@ void run(int x)
                 break;
         case READ:
                 for (w = scanf("%s", s) < 1 ? exit(0), 0 : L; strcmp(s, &s[m[w + 1]]); w = m[w]) ;
-                w - 1 ? run(w + 2) : (c=2, c=atoi(s));
+                if(w-1){
+                  x=w+2;
+                  goto INNER;
+                } else {
+                  c=2; c=atoi(s);
+                }
                 break;
         case LOAD:
                 f = m[f];
@@ -83,14 +89,32 @@ void run(int x)
         case PICK:
                 f = S[-f];
                 break;
+        case FROMR:
+                *++S = f;
+                f = m[m[1]--];
+                break;
+        case TOR:
+                m[++m[1]] = f;
+                f = *S--;
+                break;
+        case BRANCH:
+                I+=m[I];
+                break;
+        case NBRANCH:
+                if(f==0){
+                  I+=m[I] ;
+                } else {
+                  I++;
+                } 
+                f = *S--;
+                break;
         default:
                 fprintf(stderr,"Unknown instruction\n");
                 exit(1);
         }
 }
 
-int main(void)
-{
+void init(void){
         compile_word(DEFINE);
         compile_word(IMMEDIATE);
         compile_word(COMPILE); /*defining _read, a non-immediate word*/
@@ -103,6 +127,12 @@ int main(void)
         for (w = LOAD; w < LAST_ENUM;)
                 compile_word(COMPILE), c=w++;
         m[1] = *m;
-        for (*m += 512;; run(m[I++])) ;
+        *m += 512;
+}
+
+int main(void)
+{
+        init();
+        for (;; run(m[I++])) ;
         return 0;
 }
