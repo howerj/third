@@ -6,25 +6,26 @@
 #define c m[m[0]++]
 
 char s[2500];
-int m[2500] = { 32 }, L = 1, I, T[500], *S = T, t = 64, w, f;
+int m[2500] = { 32 }, L = 1, I, T[500], *S = T, t = 64, w, f, x;
 
 enum primitives{
-  PUSH,COMPILE,RUN,DEFINE,IMMEDIATE,READ,LOAD,STORE,SUBTRACT,
-  MULTIPLY,DIVIDE,LESSZ,EXIT,EMIT,KEY,PICK,FROMR,TOR,BRANCH,NBRANCH,PRINTNUM,LAST_ENUM
+  PUSH,COMPILE,RUN,DEFINE,IMMEDIATE,READ,LOAD,STORE,SUBTRACT,ADD,
+  MULTIPLY,DIVIDE,LESSZ,EXIT,EMIT,KEY,FROMR,TOR,BRANCH,NBRANCH,PRINTNUM,
+  QUOTE,COMMA,NOT,EQUAL,SWAP,DUP,DROP,TAIL,LAST_ENUM
 };
 
-void compile_word(int x)
+void compile_word(int code)
 {
         c=L;
         L = *m - 1;
         c=t;
-        c=x;
+        c=code;
         scanf("%s", s + t);
         t += strlen(s + t) + 1;
         return;
 }
 
-void init(void){
+int init(void){
         compile_word(DEFINE);
         compile_word(IMMEDIATE);
         compile_word(COMPILE); /*defining _read, a non-immediate word*/
@@ -38,11 +39,11 @@ void init(void){
                 compile_word(COMPILE), c=w++;
         m[1] = *m;
         *m += 512;
+        return I;
 }
 
 void run(void)
 {
-  int x;
   while(1){
     x = m[I++];
     INNER:
@@ -96,6 +97,9 @@ void run(void)
             case SUBTRACT:
                     f = *S-- - f;
                     break;
+            case ADD:
+                    f = *S-- + f;
+                    break;
             case MULTIPLY:
                     f *= *S--;
                     break;
@@ -115,9 +119,6 @@ void run(void)
             case KEY:
                     *++S = f;
                     f = getchar();
-                    break;
-            case PICK:
-                    f = S[-f];
                     break;
             case FROMR:
                     *++S = f;
@@ -142,8 +143,35 @@ void run(void)
                     printf("%d",f);
                     f = *S--;
                     break;
+            case QUOTE:
+                    *++S=f;
+                    f = m[I++];
+                    break;
+            case COMMA:
+                    c = f;
+                    f = *S--;
+                    break;
+            case NOT:
+                    f=!f;
+                    break;
+            case EQUAL:
+                    f = *S-- == f;
+                    break;
+            case SWAP:
+                    w = f;
+                    f = *S--;
+                    *++S = w;
+                    break;
+            case DUP:
+                    *++S = f;
+                    break;
+            case DROP:
+                    f = *S--;
+                    break;
+            case TAIL:
+                    m[1]--;
+                    break;
             default:
-                    printf("%d %d %s\n",m[0],m[1],s);
                     fprintf(stderr,"Unknown instruction\n");
                     exit(1);
             }
@@ -152,7 +180,13 @@ void run(void)
 
 int main(void)
 {
-        init();
-        run();
-        return 0;
+ /* int i;
+  stdin = fopen("third.fs","r");
+  i = init();
+  run();
+  freopen("/dev/stdin","r",stdin);
+  I = i;*/
+  init();
+  run();
+  return 0;
 }
