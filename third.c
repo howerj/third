@@ -59,20 +59,31 @@ void run(void)
                     I = x;
                     break;
             case DEFINE:
+                    m[8]=1;
                     compile_word(1);
-                    c=2;
+                    c=RUN;
                     break;
             case IMMEDIATE:
                     *m -= 2;
-                    c=2;
+                    c=RUN;
                     break;
             case READ:
+                    m[1]--;
                     for (w = scanf("%s", s) < 1 ? exit(0), 0 : L; strcmp(s, &s[m[w + 1]]); w = m[w]) ;
                     if(w-1){
                       x=w+2;
+                      if(m[8]==0){
+                        if(m[x]==COMPILE)
+                          x++;
+                      }
                       goto INNER;
                     } else {
-                      c=2; c=atoi(s);
+                      if(m[8]!=0){
+                        c=2; c=atoi(s);
+                      } else {
+                        *++S = f;
+                        f = atoi(s);
+                      }
                     }
                     break;
             case LOAD:
@@ -132,6 +143,7 @@ void run(void)
                     f = *S--;
                     break;
             default:
+                    printf("%d %d %s\n",m[0],m[1],s);
                     fprintf(stderr,"Unknown instruction\n");
                     exit(1);
             }
