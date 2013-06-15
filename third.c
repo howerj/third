@@ -8,43 +8,92 @@
 char s[2500];
 int m[2500] = { 32 }, L = 1, I, T[500], *S = T, t = 64, w, f, x;
 
+struct third_obj{
+  FILE *input, *output;
+  char s[2500];
+  int m[2500],L,I,T[500],*S,t,w,f,x;
+};
+
+typedef struct third_obj third_obj_t;
+
 enum primitives{
   PUSH,COMPILE,RUN,DEFINE,IMMEDIATE,READ,LOAD,STORE,SUBTRACT,ADD,
   MULTIPLY,DIVIDE,LESSZ,EXIT,EMIT,KEY,FROMR,TOR,BRANCH,NBRANCH,PRINTNUM,
   QUOTE,COMMA,NOT,EQUAL,SWAP,DUP,DROP,TAIL,LAST_ENUM
 };
 
-void compile_word(int code)
+enum bool{false,true};
+
+void compile_word(third_obj_t *tobj, int code, int flag, char *str)
 {
         c=L;
         L = *m - 1;
         c=t;
         c=code;
-        scanf("%s", s + t);
+        if(flag)
+          strcpy(s+t,str);
+        else
+          fscanf(tobj->input,"%s", s + t);
         t += strlen(s + t) + 1;
         return;
 }
 
-int init(void){
-        compile_word(DEFINE);
-        compile_word(IMMEDIATE);
-        compile_word(COMPILE); /*defining _read, a non-immediate word*/
+int init(third_obj_t *tobj, FILE *input, FILE *output){
+        tobj->input = input;
+        tobj->output = output;
+
+        m[0]=32;
+        L=1;
+        I=0;
+        S=T;
+        t=64;
+        w=0;
+        f=0;
+        x=0;
+
+        compile_word(tobj,DEFINE,true,":");
+        compile_word(tobj,IMMEDIATE,true,"immediate");
+        compile_word(tobj,COMPILE,true,"read");
         w = *m;
         c=READ;
         c=RUN;
         I = *m;
         c=w;
         c=I - 1;
-        for (w = LOAD; w < LAST_ENUM;)
-                compile_word(COMPILE), c=w++;
+        w = LOAD;
+
+        compile_word(tobj,COMPILE,true,"@"); c = w++;
+        compile_word(tobj,COMPILE,true,"!"); c = w++;
+        compile_word(tobj,COMPILE,true,"-"); c = w++;
+        compile_word(tobj,COMPILE,true,"+"); c = w++;
+        compile_word(tobj,COMPILE,true,"*"); c = w++;
+        compile_word(tobj,COMPILE,true,"/"); c = w++;
+        compile_word(tobj,COMPILE,true,"<0"); c = w++;
+        compile_word(tobj,COMPILE,true,"exit"); c = w++;
+        compile_word(tobj,COMPILE,true,"emit"); c = w++;
+        compile_word(tobj,COMPILE,true,"key"); c = w++;
+        compile_word(tobj,COMPILE,true,"r>"); c = w++;
+        compile_word(tobj,COMPILE,true,">r"); c = w++;
+        compile_word(tobj,COMPILE,true,"jmp"); c = w++;
+        compile_word(tobj,COMPILE,true,"jmpz"); c = w++;
+        compile_word(tobj,COMPILE,true,"."); c = w++;
+        compile_word(tobj,COMPILE,true,"'"); c = w++;
+        compile_word(tobj,COMPILE,true,","); c = w++;
+        compile_word(tobj,COMPILE,true,"not"); c = w++;
+        compile_word(tobj,COMPILE,true,"="); c = w++;
+        compile_word(tobj,COMPILE,true,"swap"); c = w++;
+        compile_word(tobj,COMPILE,true,"dup"); c = w++;
+        compile_word(tobj,COMPILE,true,"drop"); c = w++;
+        compile_word(tobj,COMPILE,true,"tail"); c = w++;
+
         m[1] = *m;
         *m += 512;
         return I;
 }
 
-void run(void)
+void run(third_obj_t *tobj)
 {
-  while(1){
+  while(true){
     x = m[I++];
     INNER:
             switch (m[x++]) {
@@ -61,7 +110,7 @@ void run(void)
                     break;
             case DEFINE:
                     m[8]=1;
-                    compile_word(1);
+                    compile_word(tobj,COMPILE,false,NULL);
                     c=RUN;
                     break;
             case IMMEDIATE:
@@ -113,12 +162,12 @@ void run(void)
                     I = m[m[1]--];
                     break;
             case EMIT:
-                    putchar(f);
+                    fputc(f,tobj->output);
                     f = *S--;
                     break;
             case KEY:
                     *++S = f;
-                    f = getchar();
+                    f = fgetc(tobj->input);
                     break;
             case FROMR:
                     *++S = f;
@@ -140,7 +189,7 @@ void run(void)
                     f = *S--;
                     break;
             case PRINTNUM:
-                    printf("%d",f);
+                    fprintf(tobj->output,"%d",f);
                     f = *S--;
                     break;
             case QUOTE:
@@ -180,13 +229,8 @@ void run(void)
 
 int main(void)
 {
- /* int i;
-  stdin = fopen("third.fs","r");
-  i = init();
-  run();
-  freopen("/dev/stdin","r",stdin);
-  I = i;*/
-  init();
-  run();
+  third_obj_t *tobj = calloc(1,sizeof(struct third_obj));
+  init(tobj,stdin,stdout);
+  run(tobj);
   return 0;
 }

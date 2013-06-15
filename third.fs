@@ -1,5 +1,3 @@
-: immediate _read @ ! - + * / <0 exit emit key r> >r jmp jmpz . ' , not = swap dup drop tail
-
 : cpf 8 exit 
 : state cpf ! exit
 : ; immediate 
