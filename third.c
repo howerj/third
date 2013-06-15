@@ -1,32 +1,20 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-
-struct third_obj {
-        FILE *input, *output;
-        char s[2500];
-        int m[2500], L, I, T[500], *S, t, w, f, x;
-};
-
-typedef struct third_obj third_obj_t;
+#include <string.h>
+#include "third.h"
 
 #define I tobj->I
 #define t tobj->t
 #define w tobj->w
 #define f tobj->f
 
-enum primitives {
-        PUSH, COMPILE, RUN, DEFINE, IMMEDIATE, READ, LOAD, STORE, SUBTRACT, ADD,
-        MULTIPLY, DIVIDE, LESSZ, EXIT, EMIT, KEY, FROMR, TOR, BRANCH, NBRANCH,
-        PRINTNUM, QUOTE, COMMA, NOT, EQUAL, SWAP, DUP, DROP, TAIL, LAST_ENUM
-};
+/*static function prototypes*/
+static void compile_word(third_obj_t * tobj, int code, int flag, char *str);
 
-enum bool { false, true };
-
-void compile_word(third_obj_t * tobj, int code, int flag, char *str)
+static void compile_word(third_obj_t * tobj, int code, int flag, char *str)
 {
-        char *s=tobj->s;
-        int *m=tobj->m;
+        char *s = tobj->s;
+        int *m = tobj->m;
         m[m[0]++] = tobj->L;
         tobj->L = *m - 1;
         m[m[0]++] = t;
@@ -41,7 +29,7 @@ void compile_word(third_obj_t * tobj, int code, int flag, char *str)
 
 int init_third(third_obj_t * tobj, FILE * input, FILE * output)
 {
-        int *m=tobj->m;
+        int *m = tobj->m;
         tobj->input = input;
         tobj->output = output;
 
@@ -119,8 +107,8 @@ int init_third(third_obj_t * tobj, FILE * input, FILE * output)
 
 void run_third(third_obj_t * tobj)
 {
-        char *s=tobj->s;
-        int *m=tobj->m,*x=&tobj->x,*S=tobj->S;
+        char *s = tobj->s;
+        int *m = tobj->m, *x = &tobj->x, *S = tobj->S;
         while (true) {
                 *x = m[I++];
  INNER:
@@ -147,12 +135,13 @@ void run_third(third_obj_t * tobj)
                         break;
                 case READ:
                         m[1]--;
-                        for (w = fscanf(tobj->input,"%s", s) < 1 ? exit(0), 0 : tobj->L;
-                             strcmp(s, &s[m[w + 1]]); w = m[w]) ;
+                        for (w =
+                             fscanf(tobj->input, "%s", s) < 1 ? exit(0),
+                             0 : tobj->L; strcmp(s, &s[m[w + 1]]); w = m[w]) ;
                         if (w - 1) {
                                 *x = w + 2;
-                                if (m[8] == 0 && m[*x]==COMPILE) {
-                                    (*x)++;
+                                if (m[8] == 0 && m[*x] == COMPILE) {
+                                        (*x)++;
                                 }
                                 goto INNER;
                         } else {
@@ -254,13 +243,4 @@ void run_third(third_obj_t * tobj)
                         exit(1);
                 }
         }
-}
-
-int main(void)
-{
-        third_obj_t *tobj = calloc(1, sizeof(struct third_obj));
-        init_third(tobj, stdin, stdout);
-        run_third(tobj);
-        free(tobj);
-        return 0;
 }
