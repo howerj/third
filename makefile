@@ -23,40 +23,40 @@ CCOPTS=-ansi -g -Wall -Wno-write-strings -Wshadow -Wextra -pedantic -O2
 all: banner third run
 
 banner:
-	@echo -e "Third, GNU Makefile\n"
-	@echo -e "Author:    $(BLUE)Richard James Howe$(DEFAULT)."
-	@echo -e "Email:     $(BLUE)howe.r.j.89@gmail.com$(DEFAULT)."
-	@echo -e "  This program is derived from a program availble from the"
-	@echo -e "  the IOCCC, see entry buzzard.2 from 1992."
-	@echo -e "\n"
+	@/bin/echo -e "Third, GNU Makefile\n"
+	@/bin/echo -e "Author:    $(BLUE)Richard James Howe$(DEFAULT)."
+	@/bin/echo -e "Email:     $(BLUE)howe.r.j.89@gmail.com$(DEFAULT)."
+	@/bin/echo -e "  This program is derived from a program availble from the"
+	@/bin/echo -e "  the IOCCC, see entry buzzard.2 from 1992."
+	@/bin/echo -e "\n"
 
 
 help:
-	@echo "Options:"
-	@echo "make"
-	@echo "     Print out banner, this help message and compile program."
-	@echo "make help"
-	@echo "     This help message."
-	@echo "make run"
-	@echo "		  Run the program."
-	@echo "make third"
-	@echo "     Compile third."
-	@echo "make pretty"
-	@echo "     Indent source, print out word count, clean up directory."
-	@echo "make clean"
-	@echo "     Clean up directory."
-	@echo "make gcov"
-	@echo "     Compile program with coverage options, run program, run gcov."
-	@echo "make splint"
-	@echo "     Run splint on all *.c and *.h source files."
-	@echo "make html"
-	@echo "     Compile the documentation."
-	@echo "make valgrind"
-	@echo "     Run program with valgrind on start up forth file only."
+	@/bin/echo "Options:"
+	@/bin/echo "make"
+	@/bin/echo "     Print out banner, this help message and compile program."
+	@/bin/echo "make help"
+	@/bin/echo "     This help message."
+	@/bin/echo "make run"
+	@/bin/echo "		  Run the program."
+	@/bin/echo "make third"
+	@/bin/echo "     Compile third."
+	@/bin/echo "make pretty"
+	@/bin/echo "     Indent source, print out word count, clean up directory."
+	@/bin/echo "make clean"
+	@/bin/echo "     Clean up directory."
+	@/bin/echo "make gcov"
+	@/bin/echo "     Compile program with coverage options, run program, run gcov."
+	@/bin/echo "make splint"
+	@/bin/echo "     Run splint on all *.c and *.h source files."
+	@/bin/echo "make html"
+	@/bin/echo "     Compile the documentation."
+	@/bin/echo "make valgrind"
+	@/bin/echo "     Run program with valgrind on start up forth file only."
 
 run: third
-	@echo "cat third.fs - | ./third"
-	@cat third.fs - | ./third
+	@/bin/echo "cat third.4th - | ./third"
+	@cat third.4th - | ./third
 
 ## Main forth program
 
@@ -70,40 +70,40 @@ third.o: third.c third.h
 
 # Indent the files, clean up directory, word count.
 pretty: 
-	@echo -e "$(BLUE)"
-	@echo -e "Indent files and clean up system.$(DEFAULT)"
-	@echo -e "$(GREEN)"
-	@echo "indent -nut -linux *.h *.c";
+	@/bin/echo -e "$(BLUE)"
+	@/bin/echo -e "Indent files and clean up system.$(DEFAULT)"
+	@/bin/echo -e "$(GREEN)"
+	@/bin/echo "indent -nut -linux *.h *.c";
 	@indent -nut -linux *.h *c;
-	@echo -e "$(RED)"
+	@/bin/echo -e "$(RED)"
 	@rm -vf third memory.txt *.log *.swo *.swp *.o *~ *.gcov *.gcda *.gcno *.html *.htm;
-	@echo -e "$(DEFAULT)"
-	@wc *.c *.h *.fs makefile
+	@/bin/echo -e "$(DEFAULT)"
+	@wc *.c *.h *.4th makefile
 
 # Clean up directory.
 clean:
-	@echo -e "$(RED)"
+	@/bin/echo -e "$(RED)"
 	@rm -vf third memory.txt *.log *.swo *.swp *.o *~ *.gcov *.gcda *.gcno *.html *.htm;
-	@echo -e "$(DEFAULT)"
+	@/bin/echo -e "$(DEFAULT)"
 
 # Static checking.
 splint:
-	@echo "Running \"splint *.c *.h &> splint.log\""
+	@/bin/echo "Running \"splint *.c *.h &> splint.log\""
 	-splint *.c *.h &> splint.log 
 
 html:
-	@echo -e "Compiling markdown to html."
-	@for i in *.md; do echo "$$i > $$i.html"; markdown $$i > $$i.html; done
+	@/bin/echo -e "Compiling markdown to html."
+	@for i in *.md; do /bin/echo "$$i > $$i.html"; markdown $$i > $$i.html; done
 
 valgrind: third
-	@echo "Running valgrind on ./third"
-	@echo "  This command needs changing in the makefile"
-	-cat third.fs | valgrind ./third &> valgrind.log << EOF
+	@/bin/echo "Running valgrind on ./third"
+	@/bin/echo "  This command needs changing in the makefile"
+	-cat third.4th | valgrind ./third &> valgrind.log << EOF
 
 gcov: CCOPTS:=$(CCOPTS) --coverage
 gcov: clean third
-	@echo "Providing gcov statistics for third program."
-	@cat third.fs | ./third << EOF
+	@/bin/echo "Providing gcov statistics for third program."
+	@cat third.4th | ./third << EOF
 	@gcov third.c main.c
 
 

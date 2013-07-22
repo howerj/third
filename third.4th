@@ -6,7 +6,6 @@
 exit
 
 : r 1 ;
-
 : h 0 ;
 : here h @ ;
 
@@ -22,6 +21,8 @@ exit
 : ')' 41 ;
 : '0' 48 ;
 
+: cr '\n' emit exit
+
 : find-) key ')' = not if tail find-) then ;
 
 : ( immediate find-) ;
@@ -35,7 +36,6 @@ exit
   swap !       
 ;
 
-: cr '\n' emit exit
 
 : _print
   dup 1 +
