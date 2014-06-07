@@ -135,8 +135,7 @@ void run_third(third_obj_t * tobj)
                         break;
                 case READ:
                         m[1]--;
-                        for (w =
-                             fscanf(tobj->input, "%s", s) < 1 ? exit(0),
+                        for (w = fscanf(tobj->input, "%s", s) < 1 ? exit(0),
                              0 : tobj->L; strcmp(s, &s[m[w + 1]]); w = m[w]) ;
                         if (w - 1) {
                                 *x = w + 2;
@@ -244,3 +243,4 @@ void run_third(third_obj_t * tobj)
                 }
         }
 }
+
