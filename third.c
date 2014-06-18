@@ -11,7 +11,8 @@
 /*static function prototypes*/
 static void compile_word(third_obj_t * tobj, int code, int flag, char *str);
 
-static void compile_word(third_obj_t * tobj, int code, int flag, char *str)
+static void
+compile_word(third_obj_t * tobj, int code, int flag, char *str)
 {
         char *s = tobj->s;
         int *m = tobj->m;
@@ -27,7 +28,8 @@ static void compile_word(third_obj_t * tobj, int code, int flag, char *str)
         return;
 }
 
-int init_third(third_obj_t * tobj, FILE * input, FILE * output)
+int 
+init_third(third_obj_t * tobj, FILE * input, FILE * output)
 {
         int *m = tobj->m;
         tobj->input = input;
@@ -105,7 +107,8 @@ int init_third(third_obj_t * tobj, FILE * input, FILE * output)
         return I;
 }
 
-void run_third(third_obj_t * tobj)
+void 
+run_third(third_obj_t * tobj)
 {
         char *s = tobj->s;
         int *m = tobj->m, *x = &tobj->x, *S = tobj->S;

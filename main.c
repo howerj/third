@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include "third.h"
 
-int main(void)
+int 
+main(void)
 {
         third_obj_t *tobj = calloc(1, sizeof(struct third_obj));
         init_third(tobj, stdin, stdout);
