@@ -1,19 +1,19 @@
-struct third_obj {
-        FILE *input, *output;
-        char s[2500];
-        int m[2500], L, I, T[500], *S, t, w, f, x;
-};
+#ifndef THIRD_H
+#define THIRD_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct third_obj;
 typedef struct third_obj third_obj_t;
 
-enum primitives {
-        PUSH, COMPILE, RUN, DEFINE, IMMEDIATE, READ, LOAD, STORE, SUBTRACT, ADD,
-        MULTIPLY, DIVIDE, LESSZ, EXIT, EMIT, KEY, FROMR, TOR, BRANCH, NBRANCH,
-        PRINTNUM, QUOTE, COMMA, NOT, EQUAL, SWAP, DUP, DROP, TAIL, LAST_ENUM
-};
+third_obj_t *third_initialize(FILE * input, FILE * output);
+int third_run(third_obj_t * tobj);
+void third_free(third_obj_t * tobj);
 
-enum bool { false, true };
+#ifdef __cplusplus
+}
+#endif
 
-/*external facing function prototypes*/
-int init_third(third_obj_t * tobj, FILE * input, FILE * output);
-void run_third(third_obj_t * tobj);
+#endif

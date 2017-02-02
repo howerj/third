@@ -6,3 +6,5 @@ a.out
 *~
 *.o
 third
+core
+*.d
