@@ -15,9 +15,5 @@ To build the system and:
 
 To run the interpreter with a minimal set of words. 
 
-## To Do
-
-* Documentation
-
 [FORTH]: https://en.wikipedia.org/wiki/Forth_%28programming_language%29
 [IOCCC]: http://ioccc.org/winners.html
